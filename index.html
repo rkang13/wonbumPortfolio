@@ -938,7 +938,6 @@
       const btn = document.getElementById('theme-toggle');
       const icon = document.getElementById('theme-icon');
 
-      // Start from OS preference, not hard-coded dark
       let current = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
       function setTheme(next) {
@@ -972,7 +971,7 @@
       });
     })();
 
-    // ===== Telemetry =====
+    // ===== Telemetry helpers =====
     function detectDevice() {
       const ua = navigator.userAgent || '';
       if (/Mobi|Android/i.test(ua)) return 'Mobile';
@@ -996,7 +995,7 @@
         referrer_host: document.referrer ? new URL(document.referrer).hostname : null,
         screen: `${window.screen.width}x${window.screen.height}`,
         viewport: `${viewportWidth}x${viewportHeight}`,
-        device: detectDevice(),            // keep your old human‑readable label
+        device: detectDevice(),
         device_type: getDeviceType(viewportWidth),
         user_agent: navigator.userAgent,
         extra,
@@ -1076,7 +1075,59 @@
 
     trackVisit();
 
-    // ===== Admin prototype =====
+    // ===== Admin with basic stats =====
+    const ADMIN_PASSWORD = 'change-this-to-something-long';
+    let isAdmin = false;
+
+    async function fetchAdminStats() {
+      if (!supabase) return;
+
+      const { data, error } = await supabase
+        .from('visits')
+        .select('country, device_type');
+
+      if (error) {
+        console.error('Failed to fetch admin stats', error);
+        return;
+      }
+
+      const byCountry = {};
+      const byDevice = {};
+
+      for (const row of data) {
+        if (row.country) {
+          byCountry[row.country] = (byCountry[row.country] || 0) + 1;
+        }
+        if (row.device_type) {
+          byDevice[row.device_type] = (byDevice[row.device_type] || 0) + 1;
+        }
+      }
+
+      renderAdminStats(byCountry, byDevice);
+    }
+
+    function renderAdminStats(byCountry, byDevice) {
+      const container = document.getElementById('admin-visits');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      const title = document.createElement('div');
+      title.className = 'admin-visits-entry';
+      title.textContent = 'Aggregated stats (current table snapshot):';
+      container.appendChild(title);
+
+      const countryLine = document.createElement('div');
+      countryLine.className = 'admin-visits-entry';
+      countryLine.textContent = 'Visits by country: ' + JSON.stringify(byCountry);
+      container.appendChild(countryLine);
+
+      const deviceLine = document.createElement('div');
+      deviceLine.className = 'admin-visits-entry';
+      deviceLine.textContent = 'Visits by device_type: ' + JSON.stringify(byDevice);
+      container.appendChild(deviceLine);
+    }
+
     (function () {
       const toggleBtn = document.getElementById('admin-toggle-btn');
       const panel = document.getElementById('admin-panel');
@@ -1089,14 +1140,16 @@
         panel.classList.toggle('active', open);
       });
 
-      panel.addEventListener('submit', (e) => {
+      panel.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!pwdInput.value.trim()) {
-          errorEl.textContent = 'This is just a local prototype; backend auth would go here.';
-        } else {
-          errorEl.textContent = '';
-          renderLocalVisitLog();
+        const pwd = pwdInput.value.trim();
+        if (!pwd || pwd !== ADMIN_PASSWORD) {
+          errorEl.textContent = 'Incorrect password.';
+          return;
         }
+        errorEl.textContent = '';
+        isAdmin = true;
+        await fetchAdminStats();
       });
     })();
   </script>
