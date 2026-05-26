@@ -666,6 +666,76 @@
       border-bottom: none;
     }
 
+    .top-admin-btn {
+      border-radius: var(--radius-full);
+      border: 1px solid var(--toggle-border);
+      padding: 0.25rem 0.7rem;
+      font-size: var(--text-xs);
+      background: var(--toggle-bg);
+      color: var(--color-text-muted);
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .top-admin-btn:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text);
+    }
+
+    .admin-popover {
+      position: fixed;
+      top: 3.2rem;
+      right: 1.5rem;
+      z-index: 40;
+      display: none;
+    }
+
+    .admin-popover.open {
+      display: block;
+    }
+
+    .admin-popover-inner {
+      min-width: 260px;
+      max-width: 320px;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--admin-panel-border);
+      background: var(--admin-panel-bg);
+      font-size: var(--text-xs);
+    }
+
+    .admin-popover-inner input[type="password"] {
+      width: 100%;
+      padding: 0.35rem 0.5rem;
+      border-radius: 0.4rem;
+      border: 1px solid var(--admin-panel-border);
+      background: var(--admin-input-bg);
+      color: var(--color-text);
+      margin: 0.25rem 0;
+    }
+
+    .admin-popover-inner button[type="submit"] {
+      margin-top: 0.15rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--toggle-border);
+      font-size: var(--text-xs);
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+
+    .admin-label {
+      display: block;
+      margin-bottom: 0.1rem;
+      color: var(--color-text-muted);
+    }
+
+    .admin-error {
+      font-size: var(--text-xs);
+      color: var(--color-error);
+      margin-top: 0.25rem;
+      min-height: 1em;
+    }
+
     footer {
       width: 100%;
       padding: var(--space-3) var(--space-6);
@@ -694,6 +764,9 @@
           <div class="dot"></div>
           <span id="status-text">Monitoring</span>
         </div>
+        <button class="top-admin-btn" id="top-admin-btn" aria-label="Admin analytics">
+          Admin
+        </button>
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
           <span id="theme-icon">🌙</span><span>Mode</span>
         </button>
@@ -891,27 +964,6 @@
             <li>💻 <a href="#" target="_blank" rel="noopener noreferrer">GitHub</a></li>
           </ul>
         </section>
-
-        <section class="sidebar-section" aria-label="Admin area">
-          <h3>Admin</h3>
-          <h4>Private analytics console</h4>
-          <p class="about-body">
-            This section is reserved for a future authenticated admin view that
-            will surface server-side telemetry (visits, geos, referrers, etc.).
-          </p>
-          <div class="admin-toggle">
-            <span>Admin access</span>
-            <button type="button" id="admin-toggle-btn">(prototype)</button>
-          </div>
-
-          <form class="admin-panel" id="admin-panel">
-            <label for="admin-password">Password (local prototype only):</label>
-            <input type="password" id="admin-password" autocomplete="off" placeholder="Enter admin password">
-            <button type="submit">Unlock admin telemetry</button>
-            <div class="admin-error" id="admin-error"></div>
-            <div class="admin-visits" id="admin-visits" aria-label="Local visit log"></div>
-          </form>
-        </section>
       </aside>
     </main>
   </div>
@@ -919,6 +971,16 @@
   <footer>
     <span>Design: Telemetry console · Content is a subset of real projects.</span>
   </footer>
+
+  <div class="admin-popover" id="admin-popover" aria-label="Admin analytics">
+    <form class="admin-popover-inner" id="admin-form">
+      <label for="admin-password" class="admin-label">Admin password</label>
+      <input type="password" id="admin-password" autocomplete="off" placeholder="Enter password">
+      <button type="submit">Unlock</button>
+      <div class="admin-error" id="admin-error"></div>
+      <div class="admin-visits" id="admin-visits" aria-label="Admin stats"></div>
+    </form>
+  </div>
 
   <script>
     const SUPABASE_URL = 'https://vnzkzdixkdfelllacyru.supabase.co';
@@ -1129,18 +1191,20 @@
     }
 
     (function () {
-      const toggleBtn = document.getElementById('admin-toggle-btn');
-      const panel = document.getElementById('admin-panel');
+      const toggleBtn = document.getElementById('top-admin-btn');
+      const popover = document.getElementById('admin-popover');
+      const form = document.getElementById('admin-form');
       const pwdInput = document.getElementById('admin-password');
       const errorEl = document.getElementById('admin-error');
+
       let open = false;
 
       toggleBtn.addEventListener('click', () => {
         open = !open;
-        panel.classList.toggle('active', open);
+        popover.classList.toggle('open', open);
       });
 
-      panel.addEventListener('submit', async (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const pwd = pwdInput.value.trim();
         if (!pwd || pwd !== ADMIN_PASSWORD) {
@@ -1150,6 +1214,15 @@
         errorEl.textContent = '';
         isAdmin = true;
         await fetchAdminStats();
+      });
+
+      // Optional: close popover on click outside
+      document.addEventListener('click', (e) => {
+        if (!open) return;
+        if (!popover.contains(e.target) && e.target !== toggleBtn) {
+          open = false;
+          popover.classList.remove('open');
+        }
       });
     })();
   </script>
