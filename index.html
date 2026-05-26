@@ -937,20 +937,6 @@
       </section>
 
       <aside class="sidebar">
-        <section class="sidebar-section" aria-label="Telemetry overview">
-          <h3>Live Stats</h3>
-          <h4>Visit snapshot (client-side only for now)</h4>
-          <div class="kv-row"><span>Current time</span><span id="kv-time">–</span></div>
-          <div class="kv-row"><span>Timezone</span><span id="kv-tz">–</span></div>
-          <div class="kv-row"><span>Screen</span><span id="kv-screen">–</span></div>
-          <div class="kv-row"><span>Device</span><span id="kv-device">–</span></div>
-          <div class="kv-row"><span>Referrer</span><span id="kv-referrer">–</span></div>
-          <p style="margin-top:0.6rem;font-size:var(--text-xs);color:var(--color-text-muted);">
-            This panel currently reads only client-side information. Server-side analytics
-            (including any IP handling) would be wired to a backend later.
-          </p>
-        </section>
-
         <section class="sidebar-section" aria-label="Summary">
           <h3>Profile</h3>
           <h4>Systems-focused engineer</h4>
@@ -1063,27 +1049,6 @@
         extra,
       };
     }
-
-    function updateTelemetryPanel() {
-      const now = new Date();
-      const kvTime = document.getElementById('kv-time');
-      const kvTz = document.getElementById('kv-tz');
-      const kvScreen = document.getElementById('kv-screen');
-      const kvDevice = document.getElementById('kv-device');
-      const kvReferrer = document.getElementById('kv-referrer');
-      if (!kvTime) return;
-      kvTime.textContent = now.toISOString().replace('T', ' ').slice(0, 19);
-      kvTz.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
-      kvScreen.textContent = `${window.innerWidth}×${window.innerHeight}`;
-      kvDevice.textContent = detectDevice();
-      kvReferrer.textContent = document.referrer || 'Direct / none';
-    }
-
-    updateTelemetryPanel();
-    window.addEventListener('resize', () => {
-      const kvScreen = document.getElementById('kv-screen');
-      if (kvScreen) kvScreen.textContent = `${window.innerWidth}×${window.innerHeight}`;
-    });
 
     const localVisitLog = [];
 
