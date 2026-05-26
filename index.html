@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="utf-8">
+  <title>Robert Kang – Telemetry Console</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.5rem;
+      --text-2xl: 2rem;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --radius-md: 0.5rem;
+      --radius-full: 9999px;
+      --transition-fast: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+      /* DARK theme (default) */
+      --color-bg: #050509;
+      --color-surface: #0b0c12;
+      --color-surface-2: #12131c;
+      --color-border: #242633;
+      --color-text: #f5f5ff;
+      --color-text-muted: #8e90aa;
+      --color-accent: #39c3c8;
+      --color-accent-soft: rgba(57, 195, 200, 0.12);
+      --color-error: #ff4b81;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.45);
+
+      /* Theme-aware component tokens — dark defaults */
+      --body-bg: radial-gradient(circle at top, #141628 0, #050509 55%);
+      --shell-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.6));
+      --shell-border-color: rgba(255, 255, 255, 0.06);
+      --topbar-bg: linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(13, 25, 32, 0.9));
+      --topbar-border: rgba(255, 255, 255, 0.06);
+      --pill-bg: rgba(4, 8, 16, 0.6);
+      --pill-border: rgba(255, 255, 255, 0.14);
+      --toggle-bg: rgba(4, 8, 16, 0.5);
+      --toggle-border: rgba(255, 255, 255, 0.14);
+      --hero-bg: radial-gradient(circle at top left, rgba(57, 195, 200, 0.10), transparent 55%), rgba(5, 7, 16, 0.95);
+      --hero-border: rgba(255, 255, 255, 0.08);
+      --hero-after-bg: radial-gradient(circle at 100% 0%, rgba(155, 125, 255, 0.18), transparent 60%);
+      --metric-bg: rgba(7, 11, 22, 0.8);
+      --metric-border: rgba(255, 255, 255, 0.12);
+      --tab-bg: rgba(4, 8, 16, 0.6);
+      --tab-border: rgba(255, 255, 255, 0.12);
+      --panel-bg: rgba(4, 8, 16, 0.9);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --sidebar-border: rgba(255, 255, 255, 0.08);
+      --admin-panel-bg: rgba(4, 8, 16, 0.85);
+      --admin-panel-border: rgba(255, 255, 255, 0.16);
+      --admin-input-bg: #050712;
+      --admin-visits-bg: rgba(2, 5, 12, 0.95);
+      --admin-visits-border: rgba(255, 255, 255, 0.12);
+      --dot-entry-border: rgba(255, 255, 255, 0.12);
+    }
+
+    /* LIGHT theme overrides — every hardcoded dark value replaced */
+    [data-theme="light"] {
+      --color-bg: #f5f5fa;
+      --color-surface: #ffffff;
+      --color-surface-2: #f0f1f9;
+      --color-border: #d3d6e6;
+      --color-text: #161623;
+      --color-text-muted: #52546b;
+      --color-accent: #007a80;
+      --color-accent-soft: rgba(0, 122, 128, 0.10);
+      --color-error: #be0044;
+      --shadow-soft: 0 14px 30px rgba(7, 16, 56, 0.12);
+
+      --body-bg: #eef0f8;
+      --shell-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(232, 234, 248, 0.96));
+      --shell-border-color: rgba(0, 0, 0, 0.07);
+      --topbar-bg: linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(244, 245, 255, 0.99));
+      --topbar-border: rgba(0, 0, 0, 0.08);
+      --pill-bg: rgba(255, 255, 255, 0.85);
+      --pill-border: rgba(0, 0, 0, 0.12);
+      --toggle-bg: rgba(255, 255, 255, 0.75);
+      --toggle-border: rgba(0, 0, 0, 0.14);
+      --hero-bg: radial-gradient(circle at top left, rgba(0, 122, 128, 0.06), transparent 55%), rgba(255, 255, 255, 0.97);
+      --hero-border: rgba(0, 0, 0, 0.07);
+      --hero-after-bg: radial-gradient(circle at 100% 0%, rgba(120, 80, 220, 0.04), transparent 60%);
+      --metric-bg: rgba(255, 255, 255, 0.9);
+      --metric-border: rgba(0, 0, 0, 0.09);
+      --tab-bg: rgba(255, 255, 255, 0.7);
+      --tab-border: rgba(0, 0, 0, 0.10);
+      --panel-bg: rgba(255, 255, 255, 0.95);
+      --panel-border: rgba(0, 0, 0, 0.07);
+      --card-border: rgba(0, 0, 0, 0.07);
+      --sidebar-border: rgba(0, 0, 0, 0.07);
+      --admin-panel-bg: rgba(244, 245, 252, 0.98);
+      --admin-panel-border: rgba(0, 0, 0, 0.13);
+      --admin-input-bg: #ffffff;
+      --admin-visits-bg: rgba(244, 245, 252, 0.99);
+      --admin-visits-border: rgba(0, 0, 0, 0.09);
+      --dot-entry-border: rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--body-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      /* No padding — full-width layout */
+    }
+
+    /* Full-width shell — no max-width, no margin auto, no border-radius */
+    .shell {
+      width: 100%;
+      background: var(--shell-bg);
+      border-bottom: 1px solid var(--shell-border-color);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-6);
+      background: var(--topbar-bg);
+      border-bottom: 1px solid var(--topbar-border);
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .logo-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 0.9rem;
+      border: 1px solid var(--pill-border);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(87, 255, 255, 0.4), transparent 55%),
+        radial-gradient(circle at 80% 100%, rgba(135, 82, 255, 0.35), transparent 55%),
+        var(--color-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-mark::after {
+      content: "";
+      position: absolute;
+      inset: 35%;
+      border-radius: inherit;
+      border: 1px solid var(--pill-border);
+      opacity: 0.6;
+    }
+
+    .logo-mark-line {
+      width: 60%;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--color-accent), #9b7dff);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .brand-text span:first-child {
+      font-size: var(--text-sm);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    .brand-text span:last-child {
+      font-size: var(--text-base);
+      font-weight: 600;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .pill {
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--pill-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--pill-bg);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #25ff9c;
+      box-shadow: 0 0 10px rgba(37, 255, 156, 0.45);
+    }
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: inherit;
+      font: inherit;
+    }
+
+    .theme-toggle {
+      border-radius: var(--radius-full);
+      border: 1px solid var(--toggle-border);
+      padding: 0.25rem 0.55rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: var(--text-xs);
+      background: var(--toggle-bg);
+      color: var(--color-text-muted);
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text);
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(260px, 1.4fr);
+      gap: var(--space-4);
+      padding: var(--space-6) clamp(1.5rem, 4vw, 3rem);
+    }
+
+    @media (max-width: 800px) {
+      .main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero {
+      padding: var(--space-4);
+      border-radius: 1.25rem;
+      border: 1px solid var(--hero-border);
+      background: var(--hero-bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: var(--hero-after-bg);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .scanline {
+      font-family: 'Roboto Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scanline::before {
+      content: "▌";
+      color: var(--color-accent);
+      animation: blink 1.4s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50% {
+        opacity: 1
+      }
+
+      50.01%,
+      100% {
+        opacity: 0
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-2);
+      color: var(--color-text);
+    }
+
+    .hero-subtitle {
+      font-size: var(--text-base);
+      max-width: 36rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-4);
+    }
+
+    .hero-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .metric {
+      padding: 0.6rem 0.9rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--metric-border);
+      background: var(--metric-bg);
+      min-width: 140px;
+    }
+
+    .metric-label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-value {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      color: var(--color-text);
+    }
+
+    .hero-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .hero-tab {
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--tab-border);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      background: var(--tab-bg);
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .hero-tab.active {
+      background: var(--color-accent-soft);
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      transform: translateY(-1px);
+    }
+
+    .hero-section {
+      display: none;
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+
+    .hero-section.active {
+      display: block;
+    }
+
+    .hero-section h3 {
+      font-size: var(--text-base);
+      margin-bottom: 0.4rem;
+      color: var(--color-text);
+    }
+
+    .hero-section ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 0.4rem;
+    }
+
+    .hero-section li::before {
+      content: "•";
+      margin-right: 0.35rem;
+      color: var(--color-accent);
+    }
+
+    .hero-section li {
+      margin-bottom: 0.2rem;
+    }
+
+    .panel {
+      margin-top: var(--space-4);
+      padding: var(--space-3);
+      border-radius: 1rem;
+      border: 1px solid var(--panel-border);
+      background: var(--panel-bg);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: var(--space-3);
+      gap: var(--space-2);
+    }
+
+    .panel-header h2 {
+      font-size: var(--text-lg);
+      color: var(--color-text);
+    }
+
+    .panel-header span {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .project-list {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .project-card {
+      padding: var(--space-3);
+      border-radius: 0.9rem;
+      border: 1px solid var(--card-border);
+      background: var(--color-surface);
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+      gap: var(--space-3);
+      transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+      cursor: default;
+    }
+
+    @media (max-width: 700px) {
+      .project-card {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .project-card:hover {
+      border-color: var(--color-accent);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
+    }
+
+    .project-title {
+      font-size: var(--text-base);
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--color-text);
+    }
+
+    .project-meta {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .project-description {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      font-size: var(--text-xs);
+    }
+
+    .project-tag {
+      padding: 0.1rem 0.5rem;
+      border-radius: var(--radius-full);
+      background: var(--color-surface-2);
+      border: 1px solid var(--card-border);
+      color: var(--color-text-muted);
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .sidebar-section {
+      border-radius: 1rem;
+      border: 1px solid var(--sidebar-border);
+      background: var(--color-surface-2);
+      padding: var(--space-3);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+    }
+
+    .sidebar-section h3 {
+      font-size: var(--text-sm);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .sidebar-section h4 {
+      font-size: var(--text-base);
+      margin-bottom: 0.35rem;
+      color: var(--color-text);
+    }
+
+    .kv-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: 0.2rem;
+      gap: var(--space-2);
+    }
+
+    .kv-row span:last-child {
+      color: var(--color-text);
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+    }
+
+    .about-body {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .link-list {
+      list-style: none;
+      font-size: var(--text-sm);
+    }
+
+    .link-list li {
+      margin-bottom: 0.2rem;
+    }
+
+    .link-list a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .link-list a:hover {
+      text-decoration: underline;
+    }
+
+    .admin-toggle {
+      margin-top: var(--space-2);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      text-align: right;
+    }
+
+    .admin-toggle button {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 2px;
+      font-size: inherit;
+    }
+
+    .admin-panel {
+      margin-top: var(--space-2);
+      padding: var(--space-2);
+      border-radius: 0.75rem;
+      border: 1px dashed var(--admin-panel-border);
+      background: var(--admin-panel-bg);
+      display: none;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    .admin-panel label {
+      display: block;
+      font-size: var(--text-xs);
+      margin-bottom: 0.25rem;
+      color: var(--color-text-muted);
+    }
+
+    .admin-panel input[type="password"] {
+      width: 100%;
+      padding: 0.4rem 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--admin-panel-border);
+      background: var(--admin-input-bg);
+      color: var(--color-text);
+      font-size: var(--text-sm);
+      margin-bottom: 0.45rem;
+    }
+
+    .admin-panel button[type="submit"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem 0.7rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--toggle-border);
+      font-size: var(--text-xs);
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+
+    .admin-panel .admin-error {
+      font-size: var(--text-xs);
+      color: var(--color-error);
+      margin-top: 0.25rem;
+      min-height: 1em;
+    }
+
+    .admin-visits {
+      margin-top: 0.5rem;
+      max-height: 180px;
+      overflow: auto;
+      border-radius: 0.6rem;
+      border: 1px solid var(--admin-visits-border);
+      background: var(--admin-visits-bg);
+      padding: 0.35rem 0.45rem;
+      font-family: 'Roboto Mono', ui-monospace, monospace;
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+    }
+
+    .admin-visits-entry {
+      padding: 0.15rem 0;
+      border-bottom: 1px dotted var(--dot-entry-border);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .admin-visits-entry:last-child {
+      border-bottom: none;
+    }
+
+    footer {
+      width: 100%;
+      padding: var(--space-3) var(--space-6);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      text-align: right;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js"></script>
+</head>
+
+<body>
+  <div class="shell">
+    <header class="top-bar">
+      <div class="top-left">
+        <div class="logo-mark">
+          <div class="logo-mark-line"></div>
+        </div>
+        <div class="brand-text">
+          <span>Telemetry Console</span>
+          <span>Robert Kang</span>
+        </div>
+      </div>
+      <div class="top-right">
+        <div class="pill">
+          <div class="dot"></div>
+          <span id="status-text">Monitoring</span>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <span id="theme-icon">🌙</span><span>Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section>
+        <section class="hero">
+          <div class="hero-inner">
+            <div class="scanline">boot sequence: linking models, devices, and people…</div>
+            <h1 class="hero-title">I build intelligent systems that operate under real constraints.</h1>
+            <p class="hero-subtitle">
+              From mixed-reality computer vision to LLM tooling and embedded interfaces,
+              this console shows a subset of the systems I design and ship.
+            </p>
+
+            <div class="hero-metrics">
+              <div class="metric">
+                <div class="metric-label">Current focus</div>
+                <div class="metric-value">AI systems & tooling</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Primary tools</div>
+                <div class="metric-value">Python · Go · Unity</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Location</div>
+                <div class="metric-value">Toronto, Canada</div>
+              </div>
+            </div>
+
+            <div class="hero-tabs" id="hero-tabs">
+              <button class="hero-tab active" data-section="projects">Projects</button>
+              <button class="hero-tab" data-section="experience">Experience</button>
+              <button class="hero-tab" data-section="about">About</button>
+              <button class="hero-tab" data-section="contact">Contact</button>
+            </div>
+
+            <div class="hero-section active" id="section-projects">
+              <h3>Selected projects</h3>
+              <p>Some systems that best represent how I think about AI, interfaces, and deployment:</p>
+              <ul>
+                <li>Mixed-reality fish detection on HoloLens 2 for aquaculture monitoring.</li>
+                <li>LLM-powered intent clarifier microservice that wraps around existing chatbots.</li>
+                <li>Image-to-LaTeX model for recovering structured math from photos and scans.</li>
+                <li>Embedded and wearable work for physiological signal capture.</li>
+              </ul>
+            </div>
+
+            <div class="hero-section" id="section-experience">
+              <h3>Experience</h3>
+              <p>I've worked across research labs, infrastructure teams, and product environments:</p>
+              <ul>
+                <li>Computer vision and mixed reality prototypes on HoloLens 2.</li>
+                <li>LLM orchestration, microservices, and system design with Go/FastAPI.</li>
+                <li>Machine learning pipelines for fuel cells and infrastructure systems.</li>
+                <li>Processor extensions, FPGA work, and embedded prototyping.</li>
+              </ul>
+            </div>
+
+            <div class="hero-section" id="section-about">
+              <h3>About</h3>
+              <p>
+                Engineer based in Toronto with a focus on turning models into tools people can actually use.
+                I like projects where constraints are real: latency budgets, field conditions, hardware limits,
+                and non-technical end users.
+              </p>
+              <p style="margin-top:0.5rem;">
+                Outside of building, I've spent time teaching, volunteering abroad, and working with
+                communities that don't usually sit next to cutting-edge tech.
+              </p>
+            </div>
+
+            <div class="hero-section" id="section-contact">
+              <h3>Contact</h3>
+              <p>If you'd like to talk about systems, interfaces, or a specific project:</p>
+              <ul>
+                <li>Email: <a href="mailto:you@example.com">you@example.com</a></li>
+                <li>LinkedIn: <a href="#" target="_blank" rel="noopener noreferrer">linkedin.com/in/your-handle</a></li>
+                <li>GitHub: <a href="#" target="_blank" rel="noopener noreferrer">github.com/your-handle</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="projects-heading">
+          <div class="panel-header">
+            <h2 id="projects-heading">Systems</h2>
+            <span>Representative work (depth over volume)</span>
+          </div>
+          <div class="project-list">
+            <article class="project-card">
+              <div>
+                <div class="project-title">Mixed-Reality Fish Detection on HoloLens 2</div>
+                <div class="project-meta">Computer vision · Edge deployment · Mixed reality</div>
+                <p class="project-description">
+                  Built a HoloLens 2 application that detects and tracks fish in real-time in aquaculture tanks.
+                  Worked end-to-end from model selection and optimization to MR interaction design and field testing.
+                </p>
+              </div>
+              <div>
+                <div class="project-tags">
+                  <span class="project-tag">HoloLens 2</span>
+                  <span class="project-tag">Unity</span>
+                  <span class="project-tag">ONNX Runtime</span>
+                  <span class="project-tag">Computer Vision</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div>
+                <div class="project-title">Conversational Intent Clarifier Service</div>
+                <div class="project-meta">LLM tooling · Backend systems · Observability</div>
+                <p class="project-description">
+                  Designed a microservice that sits in front of existing chatbots and asks targeted clarification
+                  questions when a user message is underspecified. Focused on latency, quality, and easy integration.
+                </p>
+              </div>
+              <div>
+                <div class="project-tags">
+                  <span class="project-tag">Go</span>
+                  <span class="project-tag">FastAPI</span>
+                  <span class="project-tag">Docker</span>
+                  <span class="project-tag">LLMs</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div>
+                <div class="project-title">Image-to-LaTeX Converter</div>
+                <div class="project-meta">Sequence modeling · OCR · Tooling</div>
+                <p class="project-description">
+                  Implemented a model that converts photos of mathematical expressions into LaTeX code.
+                  Focused on dataset curation, model architecture, and failure analysis on real-world images.
+                </p>
+              </div>
+              <div>
+                <div class="project-tags">
+                  <span class="project-tag">PyTorch</span>
+                  <span class="project-tag">Seq2Seq</span>
+                  <span class="project-tag">Computer Vision</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div>
+                <div class="project-title">Embedded & Wearable Signal Capture</div>
+                <div class="project-meta">Embedded systems · Hardware · Signal processing</div>
+                <p class="project-description">
+                  Prototyped wearable/embedded hardware to capture physiological signals and stream them to
+                  analysis tooling. Explored trade-offs between sampling rate, power, connectivity, and UX.
+                </p>
+              </div>
+              <div>
+                <div class="project-tags">
+                  <span class="project-tag">MCU</span>
+                  <span class="project-tag">C / C++</span>
+                  <span class="project-tag">Signal Processing</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <aside class="sidebar">
+        <section class="sidebar-section" aria-label="Telemetry overview">
+          <h3>Live Stats</h3>
+          <h4>Visit snapshot (client-side only for now)</h4>
+          <div class="kv-row"><span>Current time</span><span id="kv-time">–</span></div>
+          <div class="kv-row"><span>Timezone</span><span id="kv-tz">–</span></div>
+          <div class="kv-row"><span>Screen</span><span id="kv-screen">–</span></div>
+          <div class="kv-row"><span>Device</span><span id="kv-device">–</span></div>
+          <div class="kv-row"><span>Referrer</span><span id="kv-referrer">–</span></div>
+          <p style="margin-top:0.6rem;font-size:var(--text-xs);color:var(--color-text-muted);">
+            This panel currently reads only client-side information. Server-side analytics
+            (including any IP handling) would be wired to a backend later.
+          </p>
+        </section>
+
+        <section class="sidebar-section" aria-label="Summary">
+          <h3>Profile</h3>
+          <h4>Systems-focused engineer</h4>
+          <p class="about-body">
+            I'm drawn to problems where algorithms meet messy reality: imperfect sensors,
+            hardware limits, ambiguous human input, and tight performance budgets.
+          </p>
+          <ul class="link-list">
+            <li>📄 <a href="#" target="_blank" rel="noopener noreferrer">View resume</a></li>
+            <li>🔗 <a href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <li>💻 <a href="#" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          </ul>
+        </section>
+
+        <section class="sidebar-section" aria-label="Admin area">
+          <h3>Admin</h3>
+          <h4>Private analytics console</h4>
+          <p class="about-body">
+            This section is reserved for a future authenticated admin view that
+            will surface server-side telemetry (visits, geos, referrers, etc.).
+          </p>
+          <div class="admin-toggle">
+            <span>Admin access</span>
+            <button type="button" id="admin-toggle-btn">(prototype)</button>
+          </div>
+
+          <form class="admin-panel" id="admin-panel">
+            <label for="admin-password">Password (local prototype only):</label>
+            <input type="password" id="admin-password" autocomplete="off" placeholder="Enter admin password">
+            <button type="submit">Unlock admin telemetry</button>
+            <div class="admin-error" id="admin-error"></div>
+            <div class="admin-visits" id="admin-visits" aria-label="Local visit log"></div>
+          </form>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <footer>
+    <span>Design: Telemetry console · Content is a subset of real projects.</span>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = 'https://vnzkzdixkdfelllacyru.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_99F4xAIIIZdzCGQbid-tzQ_b_dFlj0c';
+
+    let supabase = null;
+
+    if (window.supabase && window.supabase.createClient) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else {
+      console.error('Supabase JS failed to load; skipping remote logging');
+    }
+
+    // ===== Theme toggle — respects OS preference on first load =====
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const icon = document.getElementById('theme-icon');
+
+      // Start from OS preference, not hard-coded dark
+      let current = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+      function setTheme(next) {
+        root.setAttribute('data-theme', next);
+        icon.textContent = next === 'dark' ? '🌙' : '☀️';
+        current = next;
+      }
+
+      setTheme(current);
+
+      btn.addEventListener('click', () => setTheme(current === 'dark' ? 'light' : 'dark'));
+    })();
+
+    // ===== Hero tabs =====
+    (function () {
+      const tabs = document.querySelectorAll('.hero-tab');
+      const sections = {
+        projects: document.getElementById('section-projects'),
+        experience: document.getElementById('section-experience'),
+        about: document.getElementById('section-about'),
+        contact: document.getElementById('section-contact'),
+      };
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const id = tab.dataset.section;
+          tabs.forEach(t => t.classList.toggle('active', t === tab));
+          Object.entries(sections).forEach(([key, el]) => el.classList.toggle('active', key === id));
+          trackEvent('hero_tab_click', { tab: id });
+        });
+      });
+    })();
+
+    // ===== Telemetry =====
+    function detectDevice() {
+      const ua = navigator.userAgent || '';
+      if (/Mobi|Android/i.test(ua)) return 'Mobile';
+      if (/Tablet|iPad/i.test(ua)) return 'Tablet';
+      return 'Desktop';
+    }
+
+    function getDeviceType(width) {
+      if (width < 768) return 'mobile';
+      if (width < 1024) return 'tablet';
+      return 'desktop';
+    }
+
+    function buildPayload(extra) {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      return {
+        path: window.location.pathname + window.location.search,
+        referrer: document.referrer || null,
+        referrer_host: document.referrer ? new URL(document.referrer).hostname : null,
+        screen: `${window.screen.width}x${window.screen.height}`,
+        viewport: `${viewportWidth}x${viewportHeight}`,
+        device: detectDevice(),            // keep your old human‑readable label
+        device_type: getDeviceType(viewportWidth),
+        user_agent: navigator.userAgent,
+        extra,
+      };
+    }
+
+    function updateTelemetryPanel() {
+      const now = new Date();
+      const kvTime = document.getElementById('kv-time');
+      const kvTz = document.getElementById('kv-tz');
+      const kvScreen = document.getElementById('kv-screen');
+      const kvDevice = document.getElementById('kv-device');
+      const kvReferrer = document.getElementById('kv-referrer');
+      if (!kvTime) return;
+      kvTime.textContent = now.toISOString().replace('T', ' ').slice(0, 19);
+      kvTz.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
+      kvScreen.textContent = `${window.innerWidth}×${window.innerHeight}`;
+      kvDevice.textContent = detectDevice();
+      kvReferrer.textContent = document.referrer || 'Direct / none';
+    }
+
+    updateTelemetryPanel();
+    window.addEventListener('resize', () => {
+      const kvScreen = document.getElementById('kv-screen');
+      if (kvScreen) kvScreen.textContent = `${window.innerWidth}×${window.innerHeight}`;
+    });
+
+    const localVisitLog = [];
+
+    async function trackVisit() {
+      const event = buildPayload({ type: 'visit' });
+
+      localVisitLog.push({ ts: new Date().toISOString(), type: 'visit', ...event });
+      renderLocalVisitLog();
+
+      try {
+        await fetch('https://vnzkzdixkdfelllacyru.supabase.co/functions/v1/log-visit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(event),
+        });
+      } catch (e) {
+        console.error('Failed to log visit via edge function', e);
+      }
+    }
+
+    async function trackEvent(type, payload) {
+      const event = buildPayload({ type, ...payload });
+
+      localVisitLog.push({ ts: new Date().toISOString(), ...event });
+      renderLocalVisitLog();
+
+      try {
+        await fetch('https://vnzkzdixkdfelllacyru.supabase.co/functions/v1/log-visit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(event),
+        });
+      } catch (e) {
+        console.error('Failed to log event via edge function', e);
+      }
+    }
+
+    function renderLocalVisitLog() {
+      const container = document.getElementById('admin-visits');
+      if (!container) return;
+      container.innerHTML = '';
+      localVisitLog.slice().reverse().forEach(ev => {
+        const div = document.createElement('div');
+        div.className = 'admin-visits-entry';
+        div.textContent = ev.type
+          ? `[${ev.ts}] event=${ev.type} detail=${JSON.stringify(ev)}`
+          : `[${ev.ts}] path=${ev.path} device=${ev.device} screen=${ev.screen}`;
+        container.appendChild(div);
+      });
+    }
+
+    trackVisit();
+
+    // ===== Admin prototype =====
+    (function () {
+      const toggleBtn = document.getElementById('admin-toggle-btn');
+      const panel = document.getElementById('admin-panel');
+      const pwdInput = document.getElementById('admin-password');
+      const errorEl = document.getElementById('admin-error');
+      let open = false;
+
+      toggleBtn.addEventListener('click', () => {
+        open = !open;
+        panel.classList.toggle('active', open);
+      });
+
+      panel.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!pwdInput.value.trim()) {
+          errorEl.textContent = 'This is just a local prototype; backend auth would go here.';
+        } else {
+          errorEl.textContent = '';
+          renderLocalVisitLog();
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>
