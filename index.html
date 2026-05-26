@@ -214,24 +214,6 @@
       color: var(--color-text-muted);
     }
 
-    .pill {
-      padding: 0.25rem 0.75rem;
-      border-radius: var(--radius-full);
-      border: 1px solid var(--pill-border);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: var(--pill-bg);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #25ff9c;
-      box-shadow: 0 0 10px rgba(37, 255, 156, 0.45);
-    }
-
     button {
       border: none;
       background: none;
@@ -760,15 +742,11 @@
         </div>
       </div>
       <div class="top-right">
-        <div class="pill">
-          <div class="dot"></div>
-          <span id="status-text">Monitoring</span>
-        </div>
-        <button class="top-admin-btn" id="top-admin-btn" aria-label="Admin analytics">
-          Admin
-        </button>
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
           <span id="theme-icon">🌙</span><span>Mode</span>
+        </button>
+        <button class="top-admin-btn" id="top-admin-btn" aria-label="Admin analytics">
+          Admin
         </button>
       </div>
     </header>
